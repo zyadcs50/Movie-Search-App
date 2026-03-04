@@ -1,21 +1,19 @@
+
+// Variables
 const API_KEY = "989dc5c9";
-
 btn = document.getElementById("search");
-
 const my_movies = document.getElementById("movies");
 
-const loading = document.getElementById("loading");
+
+// Search Function
 btn.onclick = function () {
   let name = document.getElementById("search_bar").value;
-  loading.style.display = "block";
   my_movies.innerHTML = `<h3 class = "loading"> Loading... </h3>`;
 
   fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&s=${name}`)
     .then((res) => res.json())
     .then((data) => {
       setTimeout(() => {
-        loading.style.display = "none";
-        loading.style.color = "white";
         if (data.Search) {
            my_movies.innerHTML = "";
           my_movies.classList.remove("movies");
@@ -39,8 +37,9 @@ btn.onclick = function () {
     });
 };
 
-// press enter
 
+
+// press enter
 document.getElementById("search_bar").addEventListener("keydown", function (e) {
   if (e.key === "Enter") {
     btn.click();
