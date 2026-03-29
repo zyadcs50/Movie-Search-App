@@ -1,71 +1,81 @@
 // Variables
-const API_KEY = "989dc5c9";
-const btn = document.getElementById("search");
-const my_movies = document.getElementById("movies");
-const UpButton = document.getElementById("Up");
+const API_KEY = '989dc5c9';
+const btn = document.getElementById('search');
+const searchBar = document.getElementById('search_bar');
+const my_movies = document.getElementById('movies');
+const UpButton = document.getElementById('Up');
 
-// Fetch Data From The API
-async function getData(movieName) {
-  const response = await fetch(
-    `https://www.omdbapi.com/?apikey=${API_KEY}&s=${movieName}`,
-  );
-  const data = await response.json();
-  setTimeout(() => {
-    if (data.Search) {
-      my_movies.innerHTML = "";
-      my_movies.classList.remove("movies");
-      my_movies.classList.add("moviesaftersearch");
-      data.Search.forEach((movie) => {
-        console.log(movie);
-        // if the movie has a photo
-        if (movie.Poster !== "N/A") {
-          my_movies.innerHTML += `
-            <div class="card">
-                <img src="${movie.Poster}">
-                <h3>${movie.Title}</h3>
-                <h4>${movie.Type}</h4>
-                <p>${movie.Year}</p>
-            </div>
-            `;
-        }
-      });
-    } else {
-      alert("Movie Not Found");
-      // return to home page
-      window.location.href = "index.html";
-    }
-  }, 1000);
+function renderMovies(movies, query) {
+  my_movies.innerHTML = `<div class="results-header"><p>Showing ${movies.length} results for <strong>"${query}"</strong></p></div>`;
+  my_movies.classList.remove('movies');
+  my_movies.classList.add('moviesaftersearch');
+
+  movies.forEach((movie) => {
+    const poster = movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/400x600/0d2238/ffffff?text=No+Image';
+    const typeLabel = movie.Type ? movie.Type.charAt(0).toUpperCase() + movie.Type.slice(1) : 'Unknown';
+
+    my_movies.innerHTML += `
+      <div class="card">
+        <img src="${poster}" alt="Poster for ${movie.Title}" />
+        <h3>${movie.Title}</h3>
+        <div class="movie-meta">
+          <span>${typeLabel}</span>
+          <span>${movie.Year}</span>
+        </div>
+      </div>
+    `;
+  });
 }
 
-// Search Function
-btn.onclick = function () {
-  let name = document.getElementById("search_bar").value;
-  if (name === "") {
-    alert("Type a valid input");
+function showNoResults(query) {
+  my_movies.classList.remove('movies');
+  my_movies.classList.add('moviesaftersearch');
+  my_movies.innerHTML = `
+    <div class="no-results">
+      Sorry, we couldn't find any movies matching <strong>"${query}"</strong>.
+      Try another title or check for typos.
+    </div>
+  `;
+}
+
+async function getData(movieName) {
+  try {
+    const response = await fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&s=${encodeURIComponent(movieName)}`);
+    const data = await response.json();
+
+    if (data.Search && data.Search.length > 0) {
+      renderMovies(data.Search, movieName);
+    } else {
+      showNoResults(movieName);
+    }
+  } catch (error) {
+    my_movies.innerHTML = `<div class="no-results">Unable to fetch results right now. Please try again later.</div>`;
+    console.error('Search error:', error);
+  }
+}
+
+btn.addEventListener('click', () => {
+  const name = searchBar.value.trim();
+  if (!name) {
+    alert('Please enter a movie title.');
+    searchBar.focus();
     return;
   }
-  my_movies.innerHTML = `<h3 class = "loading"> Loading... </h3>`;
-  getData(name);
-};
 
-window.addEventListener("scroll", () => {
-  if (window.scrollY > 250) {
-    UpButton.style.display = "block";
-  } else {
-    UpButton.style.display = "none";
-  }
+  my_movies.innerHTML = `<h3 class="loading">Loading...</h3>`;
+  getData(name);
 });
 
-UpButton.onclick = function () {
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth",
-  });
-};
+window.addEventListener('scroll', () => {
+  UpButton.style.display = window.scrollY > 250 ? 'block' : 'none';
+});
 
-// press enter
-document.getElementById("search_bar").addEventListener("keydown", function (e) {
-  if (e.key === "Enter") {
+UpButton.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+searchBar.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
     btn.click();
   }
 });
