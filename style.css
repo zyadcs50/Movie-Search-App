@@ -382,15 +382,6 @@ footer p a:hover {
   .moviesaftersearch {
     gap: 20px;
   }
-
-  .card {
-    padding: 16px;
-  }
-
-  .card img {
-    height: 240px;
-  }
-
   .moviesaftersearch {
     display: grid;
     grid-template-columns: repeat(1, 1fr);
