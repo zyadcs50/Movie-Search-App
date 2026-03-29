@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link rel="stylesheet" href="Register.css" />
+  </head>
+  <body>
+    <div class="container">
+      <form class="form-card" id="loginForm">
+        <h2>Welcome Back</h2>
+
+        <input type="email" id="loginEmail" placeholder="Email" />
+        <input type="password" id="loginPassword" placeholder="Password" />
+
+        <button type="submit">Login</button>
+
+        <p id="loginMessage" class="message"></p>
+
+        <p class="switch-page">
+          Don’t have an account?
+          <a href="register.html">Register</a>
+        </p>
+      </form>
+    </div>
+
+    <script>
+      const loginData = JSON.parse(localStorage.getItem("registration"));
+      let loginDone = false;
+      console.log(loginData);
+      const myform = document.getElementById("loginForm");
+      myform.onsubmit = function (e) {
+        e.preventDefault();
+        const email = document.getElementById("loginEmail").value;
+        const password = document.getElementById("loginPassword").value;
+        for (let i = 0; i < loginData.length; i++) {
+          if (i === loginData[i].id) {
+            console.log(i);
+            if (
+              loginData[i].email === email &&
+              loginData[i].password === password
+            ) {
+              console.log("login done");
+              window.location.href = "./index.html";
+              loginDone = true;
+            } else {
+              console.log("wrong login");
+              alert("Email or Password does not Exist ☹️")
+              myform.reset();
+            }
+            break;
+          }
+        }
+        sessionStorage.setItem("loginDone", loginDone);
+      };
+    </script>
+  </body>
+</html>

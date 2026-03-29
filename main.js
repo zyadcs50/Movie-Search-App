@@ -4,6 +4,30 @@ const searchBar = document.getElementById("search_bar");
 const moviesContainer = document.getElementById("movies");
 const upButton = document.getElementById("Up");
 const clearBtn = document.getElementById("Clear");
+const RegisterBtn = document.getElementById("Register");
+const loginBtn = document.getElementById("login");
+
+// check logged or not
+
+const logged = sessionStorage.getItem("loginDone");
+const Registered = sessionStorage.getItem("registerDone");
+if (logged || Registered) {
+  console.log("logged done");
+  clearBtn.style.display = "block";
+  btn.style.display = "block";
+  RegisterBtn.style.display = "none";
+  loginBtn.style.display = "none";
+  searchBar.disabled = false;
+}
+
+// handle register
+
+RegisterBtn.onclick = function () {
+  window.location.href = "Register.html";
+};
+loginBtn.onclick = function () {
+  window.location.href = "./login.html";
+};
 
 // handle reload if there was a search in the local storage
 

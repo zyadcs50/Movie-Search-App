@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register</title>
+    <link rel="stylesheet" href="Register.css" />
+  </head>
+  <body>
+    <div class="container">
+      <form class="form-card" id="registerForm">
+        <h2>Create Account</h2>
+
+        <input type="email" id="registerEmail" placeholder="Email" />
+        <input type="password" id="registerPassword" placeholder="Password" />
+
+        <button type="submit">Register</button>
+
+        <p id="registerMessage" class="message"></p>
+
+        <p class="switch-page">
+          Already have an account?
+          <a href="login.html">Login</a>
+        </p>
+      </form>
+    </div>
+
+    <script>
+      const registerArr = [];
+      let RegisterDone = false;
+
+      const myform = document.getElementById("registerForm");
+      let count = -1;
+      myform.onsubmit = function (e) {
+        e.preventDefault();
+        const email = document.getElementById("registerEmail").value;
+        const password = document.getElementById("registerPassword").value;
+        const user = {
+          id: count,
+          email: email,
+          password: password,
+        };
+        registerArr.push(user);
+        localStorage.setItem("registration", JSON.stringify(registerArr));
+        alert("Registered Succesfully ✅");
+        RegisterDone = true;
+        sessionStorage.setItem("registerDone", RegisterDone)
+        window.location.href = "./index.html"
+      };
+      count++;
+    </script>
+  </body>
+</html>
