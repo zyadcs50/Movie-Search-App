@@ -34,6 +34,10 @@
         e.preventDefault();
         const email = document.getElementById("loginEmail").value;
         const password = document.getElementById("loginPassword").value;
+        if (loginData.length === null) {
+          alert("Email or Password does not Exist ☹️");
+          return;
+        }
         for (let i = 0; i < loginData.length; i++) {
           if (i === loginData[i].id) {
             console.log(i);
@@ -46,7 +50,7 @@
               loginDone = true;
             } else {
               console.log("wrong login");
-              alert("Email or Password does not Exist ☹️")
+              alert("Email or Password does not Exist ☹️");
               myform.reset();
             }
             break;
