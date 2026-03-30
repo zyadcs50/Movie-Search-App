@@ -37,23 +37,24 @@
         if (loginData.length === null) {
           alert("Email or Password does not Exist ☹️");
           return;
-        }
-        for (let i = 0; i < loginData.length; i++) {
-          if (i === loginData[i].id) {
-            console.log(i);
-            if (
-              loginData[i].email === email &&
-              loginData[i].password === password
-            ) {
-              console.log("login done");
-              window.location.href = "./index.html";
-              loginDone = true;
-            } else {
-              console.log("wrong login");
-              alert("Email or Password does not Exist ☹️");
-              myform.reset();
+        } else {
+          for (let i = 0; i < loginData.length; i++) {
+            if (i === loginData[i].id) {
+              console.log(i);
+              if (
+                loginData[i].email === email &&
+                loginData[i].password === password
+              ) {
+                console.log("login done");
+                window.location.href = "./index.html";
+                loginDone = true;
+              } else {
+                console.log("wrong login");
+                alert("Email or Password does not Exist ☹️");
+                myform.reset();
+              }
+              break;
             }
-            break;
           }
         }
         sessionStorage.setItem("loginDone", loginDone);
