@@ -24,6 +24,3 @@ A simple and responsive movie search application that allows users to search for
 - OMDb API  
 
 ---
-
-## 📦 Project Structure
-
