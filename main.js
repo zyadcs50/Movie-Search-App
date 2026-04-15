@@ -4,30 +4,104 @@ const searchBar = document.getElementById("search_bar");
 const moviesContainer = document.getElementById("movies");
 const upButton = document.getElementById("Up");
 const clearBtn = document.getElementById("Clear");
-const RegisterBtn = document.getElementById("Register");
-const loginBtn = document.getElementById("login");
 
 // check logged or not
 
-const logged = sessionStorage.getItem("loginDone");
-const Registered = sessionStorage.getItem("registerDone");
-if (logged || Registered) {
-  console.log("logged done");
-  clearBtn.style.display = "block";
-  btn.style.display = "block";
-  RegisterBtn.style.display = "none";
-  loginBtn.style.display = "none";
-  searchBar.disabled = false;
+// if (logged || Registered) {
+//   console.log("logged done");
+//   clearBtn.style.display = "block";
+//   btn.style.display = "block";
+//   RegisterBtn.style.display = "none";
+//   loginBtn.style.display = "none";
+//   searchBar.disabled = false;
+// }
+
+// const API_KEY = "989dc5c9";
+// const btn = document.getElementById("search");
+// const searchBar = document.getElementById("search_bar");
+// const my_movies = document.getElementById("movies");
+
+const popularMovies = [
+  "The godfather",
+  "The Godfather Part II",
+  "Inception",
+  "Interstellar",
+  "The Dark Knight",
+  "Avengers",
+  "Joker",
+  "Gladiator",
+  "Avatar",
+  "parasite",
+  "sinners",
+  "fight club",
+];
+
+async function getPopularMovies() {
+  try {
+    const requests = popularMovies.map((movieTitle) =>
+      fetch(
+        `https://www.omdbapi.com/?apikey=${API_KEY}&t=${encodeURIComponent(movieTitle)}`,
+      ).then((res) => res.json()),
+    );
+
+    const movies = await Promise.all(requests);
+    const validMovies = movies.filter((movie) => movie.Response === "True");
+
+    renderPopularMovies(validMovies);
+  } catch (error) {
+    console.error("Error loading popular movies:", error);
+    moviesContainer.innerHTML = `<div class="no-results">Unable to load popular movies.</div>`;
+  }
+}
+
+function renderPopularMovies(movies) {
+  localStorage.setItem("MoviesResult", JSON.stringify(movies));
+  moviesContainer.classList.remove("movies");
+  moviesContainer.classList.add("moviesaftersearch");
+  let count = -1;
+  const cards = movies
+    .map((movie) => {
+      count++;
+      const poster =
+        movie.Poster !== "N/A"
+          ? movie.Poster
+          : "https://via.placeholder.com/400x600/0d2238/ffffff?text=No+Image";
+
+      const typeLabel = movie.Type
+        ? movie.Type.charAt(0).toUpperCase() + movie.Type.slice(1)
+        : "Unknown";
+
+      return `
+        <div class="card" onclick="goToDetails('${movie.imdbID}')">
+          <img src="${poster}" alt="Poster for ${movie.Title}" />
+          <h3>${movie.Title}</h3>
+          <div class="movie-meta">
+            <span>${typeLabel}</span>
+            <span>${movie.Year}</span>
+            <button class="btn showDetailsBtn" id= "${count}" onclick="MovieDetailsPage(${count})">Show Details</button>
+
+          </div>
+        </div>
+      `;
+    })
+    .join("");
+
+  moviesContainer.innerHTML = `
+    <div class="results-header">
+      <h2 class="popular">Popular Movies</h2>
+    </div>
+    ${cards}
+  `;
 }
 
 // handle register
 
-RegisterBtn.onclick = function () {
-  window.location.href = "Register.html";
-};
-loginBtn.onclick = function () {
-  window.location.href = "./login.html";
-};
+// RegisterBtn.onclick = function () {
+//   window.location.href = "Register.html";
+// };
+// loginBtn.onclick = function () {
+//   window.location.href = "./login.html";
+// };
 
 // handle reload if there was a search in the local storage
 
@@ -35,8 +109,11 @@ const searchHistory = JSON.parse(localStorage.getItem("MoviesResult"));
 const lastSearch = localStorage.getItem("LastQuery");
 console.log(typeof searchHistory);
 console.log(searchHistory);
+
 if (searchHistory !== null) {
   renderMovies(searchHistory, lastSearch);
+} else {
+  getPopularMovies();
 }
 
 clearBtn.onclick = function () {
@@ -60,12 +137,13 @@ clearBtn.onclick = function () {
     moviesContainer.classList.remove("moviesaftersearch", "fade-out");
     moviesContainer.classList.add("movies");
 
-    moviesContainer.innerHTML = `
-      <div class="text">
-        <h2 id="info1">Here is your Movie Search App</h2>
-        <p id="info2">Type your Movie Title To get Information About it</p>
-      </div>
-    `;
+    // moviesContainer.innerHTML = `
+    //   <div class="text">
+    //     <h2 id="info1">Here is your Movie Search App</h2>
+    //     <p id="info2">Type your Movie Title To get Information About it</p>
+    //   </div>
+    // `;
+    getPopularMovies();
 
     searchBar.value = "";
   }, 600);
@@ -90,7 +168,6 @@ function MovieDetailsPage(id) {
   const movieNumber = titleOfMovie.id;
   const moviesRes = localStorage.getItem("MoviesResult");
   const moviesResArray = JSON.parse(moviesRes);
-
   const selectedMovie = moviesResArray[movieNumber];
   localStorage.setItem("selectedOne", JSON.stringify(selectedMovie));
   console.log(moviesResArray[movieNumber].Title);
@@ -133,18 +210,23 @@ function renderMovies(movies, query) {
     })
     .join("");
 
-  moviesContainer.innerHTML = `
-    <div class="results-header">
-      <p>Showing ${movies.length} results for <strong>"${query}"</strong></p>
-    </div>
-    ${cards}
-  `;
+  if (query && query !== "null") {
+    moviesContainer.innerHTML = `
+      <div class="results-header">
+        <p id="resultPargraph">
+          Showing ${movies.length} results for <strong>"${query}"</strong>
+        </p>
+      </div>
+      ${cards}
+    `;
+  } else {
+    moviesContainer.innerHTML = cards;
+  }
 }
 
 async function getData(movieName) {
   btn.disabled = true;
   btn.textContent = "Searching...";
-
   try {
     const response = await fetch(
       `https://www.omdbapi.com/?apikey=${API_KEY}&s=${encodeURIComponent(movieName)}`,
@@ -160,7 +242,7 @@ async function getData(movieName) {
       console.log(data.Search);
       localStorage.setItem("MoviesResult", JSON.stringify(data.Search));
       localStorage.setItem("LastQuery", movieName);
-
+      
       renderMovies(data.Search, movieName);
     } else {
       showMessage(

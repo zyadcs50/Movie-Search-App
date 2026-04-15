@@ -61,11 +61,13 @@ body::before {
   margin-bottom: 24px;
 }
 
-.logo {
+.logo,
+.popular {
   font-size: 28px;
   font-weight: 800;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
 }
+
 
 .logo a {
   text-decoration: none;
@@ -140,6 +142,15 @@ body::before {
   min-height: calc(100vh - 196px);
   padding: 36px 12px 20px;
 }
+
+.popular {
+  font-size: 2.4rem;
+  
+  color: #eff6fc;
+  text-decoration: underline;
+  transition: ease 0.4s;
+}
+
 
 .text {
   display: flex;
@@ -249,6 +260,7 @@ body::before {
   color: #8cacff;
   letter-spacing: 0.08em;
 }
+
 
 .card p {
   font-size: 0.98rem;
