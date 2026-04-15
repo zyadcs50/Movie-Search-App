@@ -24,3 +24,6 @@ A simple and responsive movie search application that allows users to search for
 - OMDb API  
 
 ---
+
+## Live Demo 
+https://zyad-movie-search-app.netlify.app/
